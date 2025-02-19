@@ -1,0 +1,102 @@
+<!doctype html>
+<html>
+    <head>
+      <title> StaffMovement DETAILS</title>
+       <style>
+           body{
+            background-color:white;
+            display:block;
+            padding-top:90px;
+            margin-bottom:20px;
+
+           } 
+
+           table, th,td {
+            border: 1px solid black;
+            border-collapse: collapse;
+
+          }
+    
+
+           
+       
+         
+
+         .image{
+            float:left;
+            display:flex;
+            margin-right:200px;
+            border-radius:5px;
+           
+
+         }
+         </style> 
+    </head>
+    <body>
+    
+        
+
+      
+       <table>
+      <thead>
+         <tr>
+            <th>Date Reported on 1st Appointment</th>
+             <th>Current department</th>
+             <th>Department to</th>
+             <th>The Last Date of service from the current department</th>
+             
+             <th>ABSENT FROM DUTY DUE TO</th>
+             <th>EVIDENCE</th>
+             
+             <th>DATE ABSENT</th>
+             <th>RESUME AFTER</th>
+             <th>Date resumed</th>
+            
+             <th>Status</th>
+             <th>Comments</th>
+      </tr>
+   </thead>
+   <tbody>
+      {% for staffdata in staffdata %}
+         <tr>
+            <td>{{staffdata.date_reported}}</td>
+            <td>{{staffdata.current}}</td>
+            <td>{{staffdata.To}}</td>
+            <td>{{staffdata.last_date}}</td>
+
+            <td>{{staffdata.Absent}}</td>
+           
+            <td>{{staffdata.Evidence}}</td>
+          
+            <td>{{staffdata.date_chosen}}</td>
+            
+            
+            <td>{{staffdata.resumed}}</td>
+          
+            <td>{{staffdata.returned}}</td> 
+
+            <td>{{staffdata.Status}}</td>
+            <td>{{staffdata.Comments}}</td>
+         </tr>
+   {% endfor %}
+      </tbody>     
+   
+
+
+</table>
+  <div class="image">
+   <button> DOWNLOAD</button>
+  </div>
+           
+        
+       
+      
+      
+
+
+</body>
+
+
+    </html>
+
+           

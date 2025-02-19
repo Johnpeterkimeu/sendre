@@ -1,0 +1,330 @@
+{% load  static  %}
+<!doctype html>
+<html>
+    <head>
+        <meta name="csrf_token" content="{{ csrf_token }}">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="style.css">
+        <style>
+            .overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0,0,0,0.7);
+                z-index: 1;
+            }
+            .form-container {
+                position: relative;
+                z-index: 2;
+            }
+            
+            .left-border::after {
+                content: '';
+                position: absolute;
+                left: 0;
+                top: 0;
+                height: 100%;
+                width: 4px;
+                background-color: #198754; /* Bootstrap success color */
+            }
+            
+            .form-field {
+              background-color: #f8f9fa; /* Slightly darker background */
+                border: 1px solid #dee2e6; /* Bootstrap border color */
+                border-radius: 0.375rem; /* 6px */
+                padding: 1rem; /* 16px */
+                margin-bottom: 1rem;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Dark shadow */
+                position: relative;
+            }
+            .form-field input:focus,
+            .form-field select:focus,
+            .form-field textarea:focus {
+              border-color: #198754 !important;
+              box-shadow: 0 0 0 0.25rem rgba(25, 135, 84, 0.5) !important;
+            }
+            .form-title {
+              background-color: #198754; /* Bootstrap success color */
+                padding: 1rem;
+                border-radius: 0.375rem 0.375rem 0 0;
+                text-align: center;
+                color: #ffffff;
+                font-size: 1.25rem;
+                font-weight: bold;
+            }
+            
+            .required-star {
+              color: #dc3545; /* Bootstrap danger color */
+                margin-left: 0.25rem;
+            }
+            
+            .form-check-input {
+                accent-color: #212529; /* a very dark gray (almost black) */
+              }
+            
+              .form-field .form-control {
+                border-color: #b3b5b7 !important;
+              }
+        </style>
+    </head>
+    <body class="min-vh-100 d-flex justify-content-center align-items-center position-relative">
+
+        <!-- Background overlay -->
+        <div class="position-absolute top-0 start-0 w-100 h-100" style="background-color: rgba(0,0,0,0.7);"></div>
+
+            <!-- Form Container -->
+            <div class="container form-container" style="max-width: 800px; z-index: 2;">
+                <div class="card shadow-lg">
+                    <div class="card-header bg-success text-center">
+                        <img src="https://de-magazine.dkut.ac.ke/wp-content/uploads/2021/10/cropped-logo-transparent.png" alt="University Logo" class="img-fluid" style="max-width: 100px;">
+                        <h1 class="h4 text-white mt-2">DEDAN KIMATHI UNIVERSITY OF TECHNOLOGY</h1>
+                        <p class="mb-0 text-white">P.O. BOX 657, 10100 – NYERI, KENYA</p>
+                        <p class="mb-0 text-white">TELEPHONE: 0713-835-965 </p>
+                        <p class="mb-0 text-white">Email: registraraa@dkut.ac.ke</p>
+                        <p class="fst-italic text-white">OFFICE OF THE registraraa</p>
+                    </div>
+                    <div class="card-body">
+                        <form action= {% url 'movement' %} method="post" >
+                        {% csrf_token %}
+                        <h2 class="h5 text-center mb-3 text-success">STAFF MOVEMENT</h2>
+                        <div class=" mb-3 form-field left-border">
+                            <label for="datereported" class="form-label" >Date Reported on 1st Appointment <span class="text-danger">*</span></label>
+                            <input type="date"  class="form-control" id="datereported" name="Date reported on 1st Appointment">
+                        </div>
+                        <div class="mb-3 form-field left-border">
+                            {% comment %} <label for ="Schools" class="form-label"> SCHOOL <span class="text-danger">*</span></label> {% endcomment %}
+                        School:
+                            <input type= "search" class="form-control" id=School name="Schools" onclick="fetchSchools()">
+                        </div> 
+                        <div class="mb-3 form-field left-border">
+                            <label for="current department" class="form-label">Current department <span class="text-danger">*</span></label>
+                            <input type="search" class="form-control" id="current_department"  name="Current department" onclick="fetchDepartments()">
+                        </div> 
+                        <div class="mb-3 form-field left-border">   
+                            <label for ="Department to" class="form-label">Department to <span class="text-danger">*</span></label>
+                            <input type= "search" class="form-control" id="department_to"  name="Department to">
+                        </div>
+                        <div class="mb-3 form-field left-border">
+                            <label for="lastateofservice"  class="form-label">The Last Date of service from the current department <span class="text-danger">*</span></label>
+                            <input type="date"  class="form-control" id="lastdateofservice"  name="The Last Date of service  from the current department"  onclick= "fetchDepartments()">
+                        </div>
+                        <h2 class="h5 text-center mb-3 text-success">Select resumption category </h2>
+                        <div class="mb-3 form-field left-border">
+                            <label class="form-label">ABSENT FROM DUTY:  <span class="text-danger">*</span></label>
+                            <select id="option" name="option" class="form-select" required>
+                                <option value="" selected>select</option>
+                                <option value="Annual leave">Annual leave</option>
+                                <option value="Maternity Leave">Maternity Leave</option>
+                                <option value="Sabbatical Leave">Sabbatical Leave</option>
+                                <option value="Study Leave">Study Leave</option>
+                                <option value="Unpaid Leave">Unpaid Leave</option>
+                                <option value="Unauthorized Absence">Unauthorized Absence</option>
+                                <option value="Other reasons">Other reasons</option>
+                            </select>
+                        </div>
+                        {% comment %} specify here:  
+                        <label for="Other reasons(Specify)">Other(Specify)</label><br>
+                        <input type="text"   id="other"   name="other"><br> {% endcomment %}
+                        <div class="mb-3 form-field left-border">
+                            <label class="form-label">Date: <span class="text-danger">*</span></label>
+                            <input type="date"  id="re" name="ABSENT FROM DUTY" class="form-control">
+                        </div>
+                        <div class="mb-3 form-field left-border">
+                            <label class="form-label"> EVIDENCE: <span class="text-danger">*</span></label>
+                            <input type="file" id="files" name="upload" class="form-control" multiple required><br>
+                        </div>
+                        <div class="mb-3 form-field left-border">
+                            <label class="form-label"> RESUMED DUTY AFTER: <span class="text-danger">*</span></label>
+                            <select id ="resumed"   name="resumed"  class="form-select" required> 
+                                <option value="1"    selected="selected">select</option><br>
+                                <option value="Annual leave">Annual leave</option><br>
+                                <option value=" Maternity Leave"> Maternity Leave</option><br>
+                                <option value=" Sabbatical Leave" > Sabbatical Leave</option><br>
+                                <option value="Study Leave">Study Leave </option><br>
+                                <option value="Unpaid Leave">Unpaid Leave</option><br>
+                                <option value=" Unauthorized Absence"    s> Unauthorized Absence </option><br>
+                                <option value="Other reasons">Other reasons </option><br>
+                            </select>
+                        </div>
+                        {% comment %} specify here:  
+                        <label for="Other reasons(Specify)">Other(Specify)</label><br>
+                        <input type="text"   id="other"   name="others"><br> {% endcomment %}
+                        <div class="mb-3 form-field left-border">
+                            <label class="form-label"> Date resumed: <span class="text-danger">*</span></label>
+                            <input type="date"  id="date_resumed" name="date_resumed" class="form-control">
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <button type="submit" class="btn btn-success"> submit </button>
+                            <button><a href ="{% url 'page'%}" type="button" class="btn btn-link">Application details</a></button>
+                            {% comment %} <button type="reset"  class="rst"> Edit</button> {% endcomment %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+   <!-- jQuery !-->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"> </script>
+<!-- jQuery UI !-->
+<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+
+   <script>
+    $(document).ready(function(){
+         
+       $(function() {
+        $("#current_department,#department_to").autocomplete({
+          source: "/departments/",
+          minLength: 2,
+        });
+      });
+
+      });
+    
+    document.addEventListener("DOMContentLoaded", function (){
+        let today= new Date().toISOString().split('T')[0];
+        let dateInput = document.getElementById("datereported");
+
+        dateInput.setAttribute("max", today);
+
+        dateInput.addEventListener("change", function(){
+            let selectedDate = new Date(this.value);
+            let day = selectedDate.getDay();
+
+            if(day === 0 || day === 6 ) {
+            alert("Weekends are not allowed. Please select a weekday.");
+
+            this.value= "";
+
+            }
+        })
+    
+           }
+    )
+       
+    document.addEventListener("DOMContentLoaded", function (){
+        let today= new Date().toISOString().split('T')[0];
+        let dateInput = document.getElementById("lastdateofservice");
+
+        dateInput.setAttribute("max", today);
+
+dateInput.addEventListener("change", function(){
+            let selectedDate = new Date(this.value);
+            let day = selectedDate.getDay();
+
+        if(day === 0 || day === 6 ) {
+            alert("Weekends are not allowed. Please select a weekday.");
+
+            this.value= "";
+
+            }
+        })
+    
+           }
+    )
+
+
+   
+    document.addEventListener("DOMContentLoaded", function (){
+        let today= new Date().toISOString().split('T')[0];
+        let dateInput = document.getElementById("re");
+
+        dateInput.setAttribute("max", today);
+
+dateInput.addEventListener("change", function(){
+            let selectedDate = new Date(this.value);
+            let day = selectedDate.getDay();
+
+        if(day === 0 || day === 6 ) {
+            alert("Weekends are not allowed. Please select a weekday.");
+
+            this.value= "";
+
+            }
+        })
+    
+           }
+    )
+
+    document.addEventListener("DOMContentLoaded", function (){
+        let today= new Date().toISOString().split('T')[0];
+        let dateInput = document.getElementById("date_resumed");
+
+        dateInput.setAttribute("max", today);
+
+dateInput.addEventListener("change", function(){
+            let selectedDate = new Date(this.value);
+            let day = selectedDate.getDay();
+
+        if(day === 0 || day === 6 ) {
+            alert("Weekends are not allowed. Please select a weekday.");
+
+            this.value= "";
+
+            }
+        })
+    
+           }
+    )
+
+
+     function fetchDepartments(){
+       //alert('test....');
+
+    
+
+     fetch('/departments/', {
+        method: 'GET',
+        headers: {
+        'X-Requested-With': 'XMLHttpRequest',
+        },
+        })
+        .then(response => response.json())
+        .then(data => {
+        // Process the data and update the page
+        })
+        .catch(error => {
+        console.error('Error:', error);
+        });
+
+    }
+    
+    $(document).ready(function(){
+         
+        $(function() {
+         $("#School").autocomplete({
+           source: "/schools/",
+           minLength: 2,
+         });
+       });
+ 
+       });
+
+       function fetchSchools(){
+        //alert('test....');
+ 
+     
+ 
+      fetch('/schools/', {
+         method: 'GET',
+         headers: {
+         'X-Requested-With': 'XMLHttpRequest',
+         },
+         })
+         .then(response => response.json())
+         .then(data => {
+         // Process the data and update the page
+         })
+         .catch(error => {
+         console.error('Error:', error);
+         });
+ 
+     }
+     
+{{form.name}}
+</script>
+</div>
+</form>
+</body>
+ </html>

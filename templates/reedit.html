@@ -1,0 +1,193 @@
+<!doctype html>
+<html>
+<head>
+    <meta name="csrf_token" content="{{ csrf_token }}">
+    <style>
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            background: green;
+            overflow: auto;
+        }
+
+        .frm {
+            display: flex;
+            flex-direction: column;
+            width: 150%;
+            padding: 20px;
+            background: #fff;
+            border-radius: 5px;
+            gap: 10px;
+        }
+
+        .frm h1, .frm h2 {
+            margin: 0;
+        }
+
+        .frm label {
+            margin-top: 10px;
+        }
+
+        .frm input, .frm select, .frm textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        .frm input[type="date"] {
+            width: 150px;
+            height: 30px;
+        }
+
+        .frm input[type="file"] {
+            padding: 5px;
+        }
+
+        .frm button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: blue;
+            color: white;
+            cursor: pointer;
+        }
+
+        .frm button[type="reset"] {
+            background-color: red;
+        }
+
+        .frm button[type="button"] {
+            background-color: green;
+        }
+
+        .cancel, .undo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            margin-top: 20px;
+            color: blue;
+            border-radius: 14px;
+            border: 1px solid blue;
+            width: 110px;
+            height: 30px;
+            cursor: pointer;
+        }
+
+        .cancel:hover, .undo:hover {
+            background-color: blue;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <form action="{% url 'movement' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="frm">
+            <h1>STAFF MOVEMENT</h1>
+
+            <label for="datereported">Date Reported on 1st Appointment</label>
+            <input type="date" id="datereported" name="datereported" required>
+
+            <label for="current_department">Current Department</label>
+            <input type="text" id="current_department" name="current_department" required>
+
+            <label for="department_to">Department To</label>
+            <input type="text" id="department_to" name="department_to" required>
+
+            <label for="lastdateofservice">The Last Date of Service from the Current Department</label>
+            <input type="date" id="lastdateofservice" name="lastdateofservice" required>
+
+            <h2>SELECTION POST</h2>
+            <label for="option">Absent From Duty</label>
+            <select id="option" name="option" required>
+                <option value="" selected>Select</option>
+                <option value="Annual leave">Annual Leave</option>
+                <option value="Maternity Leave">Maternity Leave</option>
+                <option value="Sabbatical Leave">Sabbatical Leave</option>
+                <option value="Study Leave">Study Leave</option>
+                <option value="Unpaid Leave">Unpaid Leave</option>
+                <option value="Unauthorized Absence">Unauthorized Absence</option>
+                <option value="Other reasons">Other Reasons</option>
+            </select>
+
+            <label for="re">Date</label>
+            <input type="date" id="re" name="re" required>
+
+            <label for="files">Evidence</label>
+            <input type="file" id="files" name="files" multiple>
+
+            <label for="resumed">Resumed Duty After</label>
+            <select id="resumed" name="resumed" required>
+                <option value="" selected>Select</option>
+                <option value="Annual leave">Annual Leave</option>
+                <option value="Maternity Leave">Maternity Leave</option>
+                <option value="Sabbatical Leave">Sabbatical Leave</option>
+                <option value="Study Leave">Study Leave</option>
+                <option value="Unpaid Leave">Unpaid Leave</option>
+                <option value="Unauthorized Absence">Unauthorized Absence</option>
+                <option value="Other reasons">Other Reasons</option>
+            </select>
+
+            <label for="date_resumed">Date Resumed</label>
+            <input type="date" id="date_resumed" name="date_resumed" required>
+
+            <button type="submit" class="sbm">Submit</button>
+            <button type="button" class="btn">Application Details</button>
+            <button type="reset" class="rst">Edit</button>
+        </div>
+    </form>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $("#current_department, #department_to").autocomplete({
+                source: "/departments/",
+                minLength: 2,
+            });
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            let today = new Date().toISOString().split('T')[0];
+            document.getElementById("datereported").setAttribute("max", today);
+        });
+
+        function validateWeekday(inputId) {
+            document.getElementById(inputId).addEventListener("input", function() {
+                let selectedDate = new Date(this.value);
+                let day = selectedDate.getDay();
+                if (day === 0 || day === 6) {
+                    alert("Weekends are not allowed. Please select a weekday.");
+                    this.value = "";
+                }
+            });
+        }
+
+        validateWeekday("lastdateofservice");
+        validateWeekday("re");
+        validateWeekday("date_resumed");
+
+        function fetchDepartments() {
+            fetch('/departments/', {
+                method: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Process the data and update the page
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+    </script>
+</body>
+</html>
